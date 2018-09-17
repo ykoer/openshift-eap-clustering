@@ -1,0 +1,39 @@
+<div class="mt-4"></div>
+<div class="container">
+    <form class="form-inline">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="inputAccessToken" class="sr-only">Openshift Access Token</label>
+            <input type="text" class="form-control" id="inputAccessToken" placeholder="Openshift Access Token" ng-model="token">
+        </div>
+        <div class="btn-group mr-2" role="group">
+            <button type="submit" class="btn btn-primary mb-2" ng-click="login()">Authenticate</button>
+        </div>
+        <div class="btn-group mr-2" role="group"></div>
+            <button type="submit" class="btn btn-primary mb-2" ng-click="getProjectPods()">Get Pods</button>
+        </div>
+    </form>
+</div>
+
+
+<div class="mt-4"></div>
+<div class="container"></div>
+<table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">State</th>
+            <th scope="col">Creation Timestamp</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="pod in pods">
+            <td>{{pod.name}}</td>
+            <td>{{pod.status}}</td>
+            <td>{{pod.creationTimeStamp}}</td>
+            <td><a class="btn btn-danger btn-sm" ng-click="deletePod(pod);"> Delete</a></td>
+          </tr>
+        </tbody>
+      </table>
+</div>
+

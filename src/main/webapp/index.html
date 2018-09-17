@@ -1,0 +1,53 @@
+<html>
+  <head>
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="bower_components/components-font-awesome/css/fontawesome-all.min.css" />
+
+    
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.min.js"></script>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="controllers.js"></script>
+    <script src="services.js"></script>
+    
+  </head>
+
+
+
+
+
+
+  <body ng-app="ClusteringTestApp" class="container">
+
+    <h2>Testing OpenShift Session Replication</h2>
+
+    <br><br>
+
+        
+
+    <div class="tabs-container">
+        <uib-tabset>
+            <uib-tab heading="Session"
+            ui-sref="session"
+            ui-sref-active="active">
+            </uib-tab>
+            <uib-tab heading="Openshift"
+            ui-sref="openshift"
+            ui-sref-active="active">
+            </uib-tab>
+        </uib-tabset>
+        <div class="panel-body">
+            <div ui-view></div>
+        </div>
+    </div>
+
+  </body>
+</html>
