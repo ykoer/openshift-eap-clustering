@@ -11,11 +11,17 @@
 <body>
 
     <%
-        // gear name
-        // String gearId = System.getenv("OPENSHIFT_GEAR_UUID");
+
         File hostnameFile = new File("/etc/hostname");
-        BufferedReader br = new BufferedReader(new FileReader(hostnameFile));
-        String hostname = br.readLine();
+
+
+        String hostname = "NONE";
+        if(hostnameFile.exists()) {
+            BufferedReader br = new BufferedReader(new FileReader(hostnameFile));
+            hostname = br.readLine();
+        } else {
+            hostname = System.getenv("HOSTNAME");
+        }
 
     
         // get counter
