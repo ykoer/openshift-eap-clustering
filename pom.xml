@@ -100,6 +100,12 @@
             <artifactId>json</artifactId>
             <version>20131018</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
+            <version>1.6.0</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
