@@ -6,7 +6,11 @@ import org.springframework.util.SerializationUtils;
 public class MD5Util {
 
     public  static String getMD5Hash(byte[] bytes) {
-        return DigestUtils.md5Hex(bytes);
+        if (bytes!=null&&bytes.length>0) {
+            return DigestUtils.md5Hex(bytes);
+        } else {
+            return null;
+        }
     }
 
     public static String getMD5Hash(Object object) {

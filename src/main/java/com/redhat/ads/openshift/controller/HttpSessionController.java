@@ -1,40 +1,29 @@
 package com.redhat.ads.openshift.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.ads.openshift.model.Attribute;
 import com.redhat.ads.openshift.model.HttpSessionStateResponse;
-import com.redhat.ads.openshift.util.SessionSize;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.redhat.ads.openshift.util.MD5Util.getMD5Hash;
 
 @RestController
 @RequestMapping("/session")
 public class HttpSessionController {
 
-    private MessageDigest md;
-
-    private Pattern pattern = Pattern.compile("(^\\d+) bytes$");
+    private Runtime runtime = Runtime.getRuntime();
 
     @Value("#{environment.HOSTNAME}")
     private String hostName;
-
-    @PostConstruct
-    public void init() throws NoSuchAlgorithmException {
-        md = MessageDigest.getInstance("MD5");
-    }
 
 
     @RequestMapping(
@@ -42,20 +31,29 @@ public class HttpSessionController {
             value = "/attributes",
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public HttpSessionStateResponse setAttribute(@RequestBody Attribute attribute, HttpSession httpSession) {
-        if (StringUtils.isNotBlank(attribute.key) && StringUtils.isNotBlank(attribute.value) ) {
 
-            System.out.println("sessionid=" + httpSession.getId() + ":key=" + attribute.key);
+        if (StringUtils.isNotBlank(attribute.getKey()) && StringUtils.isNotBlank(attribute.getValue()) ) {
 
+            System.out.printf("WRITE--> sessionid=%s:key=%s\n",
+                    httpSession.getId(),
+                    attribute.getKey()
+                    //attribute.getRandomByteLength()!=null?attribute.getRandomByteLength()+" bytes":attribute.getValue()
+            );
 
-            Matcher m = pattern.matcher(attribute.value);
-            if (m.find()) {
-                int bytes = Integer.parseInt(m.group(1));
-                setAttributeRandomBytes(attribute.key, bytes, httpSession);
+            Object sessionValue;
+            if (attribute.getRandomByteLength()!=null) {
+                sessionValue = generateRandomBytes(attribute.getRandomByteLength());
             } else {
-                httpSession.setAttribute(attribute.key, attribute.value);
+                sessionValue = attribute.getValue();
             }
+
+            String hash = getMD5Hash(sessionValue);
+            attribute.setHash(hash);
+            httpSession.setAttribute(attribute.getKey(), sessionValue);
+            return new HttpSessionStateResponse(Arrays.asList(attribute), httpSession.getId(), hostName);
         }
-        return getAttribute(attribute.key, httpSession);
+
+        return null;
     }
 
     @RequestMapping(
@@ -63,9 +61,16 @@ public class HttpSessionController {
             value = "/attributes/{key}")
     public HttpSessionStateResponse getAttribute(@PathVariable String key, HttpSession httpSession) {
 
-        System.out.println("sessionid=" + httpSession.getId() + ":key=" +key);
-        Attribute attribute = new Attribute(key, httpSession.getAttribute(key));
-        HttpSessionStateResponse response = new HttpSessionStateResponse(attribute, httpSession.getId(), hostName);
+        System.out.println("READ---> sessionid=" + httpSession.getId() + ":key=" +key);
+
+
+        Object sessionValue = httpSession.getAttribute(key);
+        Attribute attribute = new Attribute(key, sessionValue);
+
+        if (sessionValue!=null) {
+            attribute.setHash(getMD5Hash(sessionValue));
+        }
+        HttpSessionStateResponse response = new HttpSessionStateResponse(Arrays.asList(attribute), httpSession.getId(), hostName);
 
         return response;
     }
@@ -83,17 +88,28 @@ public class HttpSessionController {
     }
 
     @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/attributes/{key}/bytes/{length}")
-    public void setAttributeRandomBytes(@PathVariable String key, int length, HttpSession httpSession) {
+            method = RequestMethod.GET,
+            value = "/logout")
+    public void logout(HttpSession httpSession) {
+       httpSession.invalidate();
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/gc")
+    public void runGC() {
+        System.out.println("Running GC...");
+        runtime.gc();
+    }
+
+    private byte[] generateRandomBytes(int length) {
         byte[] bytes = new byte[length];
         new Random().nextBytes(bytes);
-
-        System.out.println(bytes.length);
-
-
-        httpSession.setAttribute(key, bytes);
+        return bytes;
     }
+
+
+
 
 
 }

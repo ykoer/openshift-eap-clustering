@@ -1,7 +1,6 @@
 package com.redhat.ads.openshift.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 public class HttpSessionStateResponse implements Serializable {
@@ -19,12 +18,6 @@ public class HttpSessionStateResponse implements Serializable {
 
     public HttpSessionStateResponse(List<Attribute> attributes, String sessionId, String hostName) {
         this.attributes = attributes;
-        this.sessionId = sessionId;
-        this.node = hostName;
-    }
-
-    public HttpSessionStateResponse(Attribute attribute, String sessionId, String hostName) {
-        this.attributes = Arrays.asList(new Attribute[] {attribute});
         this.sessionId = sessionId;
         this.node = hostName;
     }

@@ -2,13 +2,13 @@ package com.redhat.ads.openshift.model;
 
 import java.io.Serializable;
 
-import static com.redhat.ads.openshift.util.MD5Util.getMD5Hash;
 
 public class Attribute implements Serializable {
 
-    public String key;
-    public String value;
-    public String hash;
+    private String key;
+    private String value;
+    private String hash;
+    private Integer randomByteLength;
 
 
     public Attribute() {
@@ -16,14 +16,12 @@ public class Attribute implements Serializable {
 
     public Attribute(String key, Object object) {
         this.key = key;
-
         if (object!=null) {
             if (object instanceof String) {
                 this.value = (String) object;
             } else {
                 this.value = "[BYTE ARRAY]";
             }
-            this.hash = getMD5Hash(object);
         }
     }
 
@@ -41,6 +39,7 @@ public class Attribute implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+        //this.hash = getMD5Hash(value);
     }
 
     public String getHash() {
@@ -51,12 +50,22 @@ public class Attribute implements Serializable {
         this.hash = hash;
     }
 
+    public Integer getRandomByteLength() {
+        return randomByteLength;
+    }
+
+    public void setRandomByteLength(Integer randomByteLength) {
+        this.randomByteLength = randomByteLength;
+        this.setValue("[RANDOM BYTE ARRAY]");
+    }
+
     @Override
     public String toString() {
         return "Attribute{" +
                 "key='" + key + '\'' +
                 ", value='" + value + '\'' +
                 ", hash='" + hash + '\'' +
+                ", randomByteLength=" + randomByteLength +
                 '}';
     }
 }
