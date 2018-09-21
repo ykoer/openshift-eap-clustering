@@ -1,8 +1,6 @@
 package com.redhat.ads.openshift.controller;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.ads.openshift.model.Attribute;
 import com.redhat.ads.openshift.model.HttpSessionStateResponse;
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +52,13 @@ public class HttpSessionController {
         }
 
         return null;
+    }
+
+    public void setAttribute(String key, int randomBytes, HttpSession httpSession) {
+        Attribute attribute = new Attribute();
+        attribute.setKey(key);
+        attribute.setRandomByteLength(randomBytes);
+        setAttribute(attribute, httpSession);
     }
 
     @RequestMapping(

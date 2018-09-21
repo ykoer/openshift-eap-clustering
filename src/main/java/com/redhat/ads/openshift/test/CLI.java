@@ -121,6 +121,8 @@ public class CLI {
             runner.initializeJolokiaMetrics(TEST_RESULTS_PATH, TEST_RUN_NAME, JOLOKIA_FREQUENCY_SECONDS);
             runner.initializeTimer(TEST_DURATION_MINUTES);
             runner.runTests(CONCURRENT_USERS, WRITE_READ_OPERATIONS_PER_USER, WRITE_READ_DELAY_MILLIS, RANDOM_BYTES, LOOP_COUNT);
+            runner.killPodsRandomly();
+
         }
     }
 }

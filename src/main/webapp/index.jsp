@@ -1,5 +1,5 @@
 <%@page import="java.util.Date"%>
-<%@page import="java.io.File,java.io.BufferedReader,java.io.FileReader" %>
+<%@page import="java.io.File,java.io.BufferedReader,java.io.FileReader,com.redhat.ads.openshift.controller.HttpSessionController" %>
 
 <html>
 <head>
@@ -11,6 +11,9 @@
 <body>
 
     <%
+
+        HttpSessionController controller = new HttpSessionController();
+
 
         File hostnameFile = new File("/etc/hostname");
 
@@ -34,13 +37,17 @@
         // check for increment action
         String action = request.getParameter("action");
 
-        if (action != null && action.equals("increment")) {
-            // increment number
-            counter = counter.intValue() + 1;
+        if (action != null) {
+            if (action.equals("increment")) {
+                // increment number
+                counter = counter.intValue() + 1;
 
-            // update session
-            session.setAttribute("demo.counter", counter);
-            session.setAttribute("demo.timestamp", new Date());
+                // update session
+                session.setAttribute("demo.counter", counter);
+                session.setAttribute("demo.timestamp", new Date());
+            } else if(action.equals("add_bytes")) {
+                controller.setAttribute(request.getParameter("key"), Integer.parseInt(request.getParameter("bytes")), session);
+            }
         }
     %>
     <h3>Testing OpenShift Session Replication</h3>
@@ -82,8 +89,20 @@
     <br>
     <br>
 
+
     <a href="index.jsp?action=increment">Increment Counter</a> |
     <a href="index.jsp">Refresh</a>
+    <br>
+    <br>
+
+    <form action="index.jsp" method="GET">
+     Key: <input type="text" name="key">
+     <br />
+     Bytes length: <input type="text" name="bytes" />
+     <input type="hidden" name="action" value="add_bytes">
+     <input type="submit" value="Add" />
+
+    </form>
 
 </body>
 </html>

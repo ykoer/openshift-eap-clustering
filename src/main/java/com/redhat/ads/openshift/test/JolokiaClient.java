@@ -2,10 +2,12 @@ package com.redhat.ads.openshift.test;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -14,12 +16,15 @@ import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class JolokiaClient {
 
     private final String podProxyUrl;
-    private HttpClient httpClient = new DefaultHttpClient();
+    private final HttpClient httpClient;
     private final HttpContext httpContext;
     private final String openshiftToken;
 
@@ -35,8 +40,16 @@ public class JolokiaClient {
         this.podProxyUrl = String.format("%s/%s/%s/pods/http:%s:8080/proxy/jolokia", openshiftUrl, openshiftApiUri, openshiftProject, "%s");
         this.openshiftToken = openshiftToken;
 
-        this.httpClient = new DefaultHttpClient();
-        ;
+
+
+        RequestConfig.Builder requestBuilder = RequestConfig.custom();
+        requestBuilder = requestBuilder.setConnectTimeout(5);
+        requestBuilder = requestBuilder.setConnectionRequestTimeout(5);
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        builder.setDefaultRequestConfig(requestBuilder.build());
+        this.httpClient = builder.build();
+
         this.httpContext = new BasicHttpContext();
         this.httpContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
         this.resultsFolder = resultsFolder;
@@ -54,7 +67,7 @@ public class JolokiaClient {
     }
 
 
-    public void getJVMStats(String podName) throws Exception {
+    public void getJVMStats(String podName, String podIndex) throws Exception {
         HttpGet httpGet = new HttpGet(getPodProxyUrl(podName) + "/read/java.lang:type=Memory/HeapMemoryUsage");
         httpGet.addHeader("Authorization", "Bearer " + openshiftToken);
 
@@ -66,7 +79,7 @@ public class JolokiaClient {
         try {
             JSONObject jObj = new JSONObject(json);
             JSONObject value = jObj.getJSONObject("value");
-            fileWriter = new FileWriter(resultsFolder + "/results-" + testRunName + "-" + podName + ".csv", true);
+            fileWriter = new FileWriter(resultsFolder + "/results-" + testRunName + "-" + podIndex + ".csv", true);
             fileWriter.append(getCurrentDateTimeAsString());
             fileWriter.append(COMMA_DELIMITER);
             fileWriter.append(String.valueOf(value.getLong("init")/1000000));

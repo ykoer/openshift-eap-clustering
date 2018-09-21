@@ -62,6 +62,26 @@ public class OpenshiftServiceImpl implements OpenshiftService {
         return Collections.emptyList();
     }
 
+    public List<IPod> getPodsRaw(String project, String service, String status) {
+        List<IService> services = client.list(ResourceKind.SERVICE, project);
+        Optional<IService> iServiceOptional = services.stream().filter(s->s.getName().startsWith(service)).findFirst();
+
+        if(iServiceOptional.isPresent()) {
+            IService iService = iServiceOptional.get();
+
+            List<IPod> pods = iService.getPods();
+
+            if (status!=null) {
+                pods = pods.stream().filter(p->p.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+
+            }
+
+            return pods;
+
+        }
+        return Collections.emptyList();
+    }
+
     @Override
     public boolean deletePod(String project, String name) {
 
@@ -87,5 +107,9 @@ public class OpenshiftServiceImpl implements OpenshiftService {
             .status(ipod.getStatus())
             .host(ipod.getHost())
             .IP(ipod.getIP());
+
+
+
+
 
 }

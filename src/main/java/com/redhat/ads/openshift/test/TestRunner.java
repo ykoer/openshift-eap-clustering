@@ -3,13 +3,11 @@ package com.redhat.ads.openshift.test;
 import com.redhat.ads.openshift.model.Pod;
 import com.redhat.ads.openshift.service.OpenshiftServiceImpl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TestRunner {
 
@@ -35,7 +33,7 @@ public class TestRunner {
     }
 
     public void killPods() {
-        String[] podNames = getPodNames(oc);
+        List<String> podNames = getPodNames();
         System.out.println("Deleting Pods...");
         for (String podName : podNames) {
             oc.deletePod(openshiftProject, podName);
@@ -46,12 +44,17 @@ public class TestRunner {
     public void initializeJolokiaMetrics(String resultsPath, String testRunName, int runEverySeconds ) {
         JolokiaClient jolokiaClient = new JolokiaClient(openshiftUrl, OPENSHIFT_API_URI, openshiftProject, openshiftToken, resultsPath, testRunName);
 
-        String[] podNames = getPodNames(oc);
+
         Runnable jvmStatsRunner = () -> {
             try {
                 while(true) {
+                   List<String> podNames = getPodNames();
+                   Collections.sort(podNames);
+
                     for (String podName : podNames) {
-                        jolokiaClient.getJVMStats(podName);
+                        String pod = "pod"+(podNames.indexOf(podName)+1);
+                        System.out.println(pod+":"+podName);
+                        jolokiaClient.getJVMStats(podName, pod);
                     }
                     TimeUnit.SECONDS.sleep(runEverySeconds);
                 }
@@ -96,18 +99,33 @@ public class TestRunner {
         }
     }
 
-    private String[] getPodNames(OpenshiftServiceImpl oc) {
-
-        System.out.println(openshiftProject +":"+openshiftService );
-
+    private List<String> getPodNames() {
         List<Pod> pods = oc.getPods(openshiftProject, openshiftService, OPENSHIFT_POD_STATUS_RUNNING);
         if (pods!=null && pods.size()>0) {
-            return pods.stream().map(pod-> pod.getName()).toArray(String[]::new);
+            return pods.stream().map(pod-> pod.getName()).collect(Collectors.toList());
         } else {
-            return new String[] {};
+            return Collections.emptyList();
         }
     }
 
+    public void killPodsRandomly() {
 
+        Runnable randomPodKill = () -> {
+            try {
+                while (true) {
+                    TimeUnit.SECONDS.sleep(120);
+                    List<String> podNames = getPodNames();
+                    Random rand = new Random();
+                    String randomPod = podNames.get(rand.nextInt(podNames.size()));
+                    oc.deletePod(openshiftProject, randomPod);
+
+                }
+            } catch (Exception e) {
+
+            }
+        };
+        Thread thread = new Thread(randomPodKill);
+        thread.start();
+    }
 
 }
