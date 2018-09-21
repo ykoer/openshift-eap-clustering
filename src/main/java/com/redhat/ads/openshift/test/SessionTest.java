@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.util.concurrent.TimeUnit;
 
-public class SessionTest1 {
+public class SessionTest {
 
     private static final String API_URL = "https://eap-clustering-test-ads--prototype.int.paas.dev.redhat.com";
     private static final String API_URL1 = "http://localhost:9090";
@@ -29,13 +29,13 @@ public class SessionTest1 {
 
 
 
-    public SessionTest1() {
+    public SessionTest() {
         httpClient = new DefaultHttpClient();;
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(HttpClientContext.COOKIE_STORE, new BasicCookieStore());
     }
 
-    public void runTest(int count, int randomByteSize, int delayMillis) throws Exception {
+    public int runTest(int count, int randomByteSize, int writeReadDelayMillis) throws Exception {
 
         int errorCount = 0;
         for (int i=0; i<count; i++) {
@@ -43,24 +43,24 @@ public class SessionTest1 {
             String key = "key" + i;
 
             HttpSessionStateResponse writeResponse = setAttribute(key, randomByteSize);
-            //System.out.println(writeResponse);
             String hashWrite = writeResponse.getAttributes().stream().findFirst().get().getHash();
 
+            TimeUnit.MILLISECONDS.sleep(writeReadDelayMillis);
+
             HttpSessionStateResponse readResponse = getAttribute(key);
-            //System.out.println(readResponse);
             String hashRead = readResponse.getAttributes().stream().findFirst().get().getHash();
 
             boolean matches = true;
             if (!hashWrite.equals(hashRead)) {
+                System.out.println(writeResponse.getSessionId() + ":" + key + ":" + hashWrite + ":" + hashRead + ":" + matches);
                 matches = false;
                 errorCount++;
             }
-            System.out.println(writeResponse.getSessionId() + ":" + key + ":" + hashWrite + ":" + hashRead + ":" + matches);
-            TimeUnit.MILLISECONDS.sleep(delayMillis);
+
         }
 
-        logout();
-        System.out.println("DONE errors: " + errorCount);
+        //logout();
+        return errorCount;
     }
 
     public HttpSessionStateResponse getAttribute(String key) throws Exception {
@@ -107,9 +107,4 @@ public class SessionTest1 {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        SessionTest1 test = new SessionTest1();
-        test.runTest(100,     50000, 1000);
-
-    }
 }

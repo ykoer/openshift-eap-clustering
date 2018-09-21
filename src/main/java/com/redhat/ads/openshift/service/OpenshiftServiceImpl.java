@@ -23,9 +23,6 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssz");
 
-
-
-
     IClient client;
 
     @Value("${openshift.console.url}")
@@ -44,7 +41,6 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
     @Override
     public List<Pod> getPods(String project, String service, String status) {
-
         List<IService> services = client.list(ResourceKind.SERVICE, project);
         Optional<IService> iServiceOptional = services.stream().filter(s->s.getName().startsWith(service)).findFirst();
 
@@ -55,6 +51,7 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
             if (status!=null) {
                 pods = pods.stream().filter(p->p.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+
             }
 
             return Optional.ofNullable(pods).orElse(Collections.emptyList()).stream()
@@ -62,7 +59,6 @@ public class OpenshiftServiceImpl implements OpenshiftService {
                     .collect(Collectors.toList());
 
         }
-
         return Collections.emptyList();
     }
 
