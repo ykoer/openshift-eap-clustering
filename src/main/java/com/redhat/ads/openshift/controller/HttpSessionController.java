@@ -61,6 +61,14 @@ public class HttpSessionController {
         setAttribute(attribute, httpSession);
     }
 
+    public void setAttribute(int randomBytes, HttpSession httpSession) {
+        String key = UUID.randomUUID().toString();
+        Attribute attribute = new Attribute();
+        attribute.setKey(key);
+        attribute.setRandomByteLength(randomBytes);
+        setAttribute(attribute, httpSession);
+    }
+
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/attributes/{key}")

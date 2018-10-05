@@ -46,7 +46,7 @@
                 session.setAttribute("demo.counter", counter);
                 session.setAttribute("demo.timestamp", new Date());
             } else if(action.equals("add_bytes")) {
-                controller.setAttribute(request.getParameter("key"), Integer.parseInt(request.getParameter("bytes")), session);
+                controller.setAttribute(Integer.parseInt(request.getParameter("bytes")), session);
             }
         }
     %>
@@ -96,9 +96,7 @@
     <br>
 
     <form action="index.jsp" method="GET">
-     Key: <input type="text" name="key">
-     <br />
-     Bytes length: <input type="text" name="bytes" />
+     Bytes length: <input type="text" name="bytes" value="<%= request.getParameter("bytes") %>"/>
      <input type="hidden" name="action" value="add_bytes">
      <input type="submit" value="Add" />
 
