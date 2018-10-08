@@ -109,6 +109,13 @@ public class HttpSessionController {
 
     @RequestMapping(
             method = RequestMethod.GET,
+            value = "/pod")
+    public String getPodName(HttpSession httpSession) {
+        return hostName;
+    }
+
+    @RequestMapping(
+            method = RequestMethod.GET,
             value = "/gc")
     public void runGC() {
         System.out.println("Running GC...");
