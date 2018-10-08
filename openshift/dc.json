@@ -1,0 +1,266 @@
+{
+    "apiVersion": "apps.openshift.io/v1",
+    "kind": "DeploymentConfig",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps.openshift.io/v1\",\"kind\":\"DeploymentConfig\",\"metadata\":{\"annotations\":{},\"labels\":{\"application\":\"eap-clustering-test\",\"template\":\"DEPLOY_TEMPLATE\"},\"name\":\"eap-clustering-test\",\"namespace\":\"ads--prototype\"},\"spec\":{\"replicas\":2,\"selector\":{\"deploymentConfig\":\"eap-clustering-test\"},\"strategy\":{\"activeDeadlineSeconds\":21600,\"recreateParams\":{\"timeoutSeconds\":600},\"resources\":{},\"type\":\"Rolling\"},\"template\":{\"metadata\":{\"creationTimestamp\":null,\"labels\":{\"application\":\"eap-clustering-test\",\"deploymentConfig\":\"eap-clustering-test\"},\"name\":\"eap-clustering-test\"},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"JGROUPS_PING_PROTOCOL\",\"value\":\"openshift.DNS_PING\"},{\"name\":\"OPENSHIFT_DNS_PING_SERVICE_NAME\",\"value\":\"eap-clustering-test-ping\"},{\"name\":\"OPENSHIFT_DNS_PING_SERVICE_PORT\",\"value\":\"8888\"},{\"name\":\"MQ_CLUSTER_PASSWORD\",\"value\":\"R2fK7CCu\"},{\"name\":\"MQ_QUEUES\"},{\"name\":\"MQ_TOPICS\"},{\"name\":\"JGROUPS_CLUSTER_PASSWORD\",\"value\":\"DSWPUNA4\"},{\"name\":\"AUTO_DEPLOY_EXPLODED\",\"value\":\"false\"}],\"imagePullPolicy\":\"Always\",\"livenessProbe\":{\"exec\":{\"command\":[\"/bin/bash\",\"-c\",\"/opt/eap/bin/livenessProbe.sh\"]},\"failureThreshold\":3,\"initialDelaySeconds\":60,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":1},\"name\":\"eap-clustering-test\",\"ports\":[{\"containerPort\":8778,\"name\":\"jolokia\",\"protocol\":\"TCP\"},{\"containerPort\":8080,\"name\":\"http\",\"protocol\":\"TCP\"},{\"containerPort\":8888,\"name\":\"ping\",\"protocol\":\"TCP\"}],\"readinessProbe\":{\"exec\":{\"command\":[\"/bin/bash\",\"-c\",\"/opt/eap/bin/readinessProbe.sh\"]},\"failureThreshold\":3,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":1},\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"1Gi\"}},\"terminationMessagePath\":\"/dev/termination-log\",\"terminationMessagePolicy\":\"File\"}],\"dnsPolicy\":\"ClusterFirst\",\"restartPolicy\":\"Always\",\"schedulerName\":\"default-scheduler\",\"securityContext\":{},\"terminationGracePeriodSeconds\":75}},\"test\":false,\"triggers\":[{\"imageChangeParams\":{\"automatic\":true,\"containerNames\":[\"eap-clustering-test\"],\"from\":{\"kind\":\"ImageStreamTag\",\"name\":\"eap-clustering-test:latest\"}},\"type\":\"ImageChange\"},{\"type\":\"ConfigChange\"}]}}\n"
+        },
+        "creationTimestamp": null,
+        "generation": 1,
+        "labels": {
+            "application": "eap-clustering-test",
+            "template": "DEPLOY_TEMPLATE"
+        },
+        "name": "eap-clustering-test",
+        "selfLink": "/apis/apps.openshift.io/v1/namespaces/ads--prototype/deploymentconfigs/eap-clustering-test"
+    },
+    "spec": {
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "deploymentConfig": "eap-clustering-test"
+        },
+        "strategy": {
+            "activeDeadlineSeconds": 21600,
+            "recreateParams": {
+                "timeoutSeconds": 600
+            },
+            "resources": {},
+            "rollingParams": {
+                "intervalSeconds": 1,
+                "maxSurge": "25%",
+                "maxUnavailable": "25%",
+                "timeoutSeconds": 600,
+                "updatePeriodSeconds": 1
+            },
+            "type": "Rolling"
+        },
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "application": "eap-clustering-test",
+                    "deploymentConfig": "eap-clustering-test"
+                },
+                "name": "eap-clustering-test"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "JGROUPS_PING_PROTOCOL",
+                                "value": "openshift.DNS_PING"
+                            },
+                            {
+                                "name": "OPENSHIFT_DNS_PING_SERVICE_NAME",
+                                "value": "eap-clustering-test-ping"
+                            },
+                            {
+                                "name": "OPENSHIFT_DNS_PING_SERVICE_PORT",
+                                "value": "8888"
+                            },
+                            {
+                                "name": "MQ_CLUSTER_PASSWORD",
+                                "value": "R2fK7CCu"
+                            },
+                            {
+                                "name": "MQ_QUEUES"
+                            },
+                            {
+                                "name": "MQ_TOPICS"
+                            },
+                            {
+                                "name": "JGROUPS_CLUSTER_PASSWORD",
+                                "value": "DSWPUNA4"
+                            },
+                            {
+                                "name": "AUTO_DEPLOY_EXPLODED",
+                                "value": "false"
+                            },
+                            {
+                                "name": "HTTPS_KEYSTORE_DIR",
+                                "value": "/var/run/shared"
+                            },
+                            {
+                                "name": "HTTPS_KEYSTORE",
+                                "value": "ssl-keystore.pkcs12"
+                            },
+                            {
+                                "name": "HTTPS_PASSWORD",
+                                "value": "changeit"
+                            },
+                            {
+                                "name": "HTTPS_NAME",
+                                "value": "ssl"
+                            },
+                            {
+                                "name": "JAVA_OPTS_APPEND",
+                                "value": "-Djavax.net.ssl.trustStore=/var/run/shared/cacerts"
+                            }
+                        ],
+                        "image": "docker-registry.default.svc:5000/ads--prototype/eap-clustering-test@sha256:73b0ba33bd21de44bb52c9a8feade863378638de832fd85c828ee81de8424366",
+                        "imagePullPolicy": "Always",
+                        "livenessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/eap/bin/livenessProbe.sh"
+                                ]
+                            },
+                            "failureThreshold": 3,
+                            "initialDelaySeconds": 60,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "eap-clustering-test",
+                        "ports": [
+                            {
+                                "containerPort": 8778,
+                                "name": "jolokia",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8080,
+                                "name": "http",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8443,
+                                "name": "https",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8888,
+                                "name": "ping",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/eap/bin/readinessProbe.sh"
+                                ]
+                            },
+                            "failureThreshold": 3,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "1",
+                                "memory": "1Gi"
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                         "volumeMounts": [
+                            {
+                                "mountPath": "/var/run/shared",
+                                "name": "shared-volume"
+                            }
+                        ]
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "args": [
+                            "-c",
+                            "openssl pkcs12 -export -inkey /var/run/secrets/openshift.io/services_serving_certs/tls.key -in /var/run/secrets/openshift.io/services_serving_certs/tls.crt -out /var/run/shared/ssl-keystore.pkcs12 -password pass:$KEYSTORE_PASSWORD -name ssl \u0026\u0026 cp /etc/pki/ca-trust/extracted/java/cacerts /var/run/shared \u0026\u0026 chmod +w /var/run/shared/cacerts \u0026\u0026 keytool -import -noprompt -keystore /var/run/shared/cacerts -storepass changeit -trustcacerts -file /var/run/secrets/openshift.io/ca-trust/ca.crt -alias redhat-ca \u0026\u0026 curl -s https://nexus-internal.ext.paas.dev.redhat.com/repository/maven-central/com/newrelic/agent/java/newrelic-agent/3.48.0/newrelic-agent-3.48.0.jar --output /var/run/shared/newrelic.jar"
+                        ],
+                        "command": [
+                            "/bin/bash"
+                        ],
+                        "env": [
+                            {
+                                "name": "KEYSTORE_PASSWORD",
+                                "value": "changeit"
+                            }
+                        ],
+                        "image": "registry.paas.redhat.com/itpaas-blessed-images/rhel7-platops-openjdk8",
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "prepare",
+                        "resources": {},
+                        "securityContext": {
+                            "runAsUser": 2000
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/var/run/shared",
+                                "name": "shared-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/openshift.io/ca-trust",
+                                "name": "rhit-ca-volume"
+                            },
+                            {
+                                "mountPath": "/var/run/secrets/openshift.io/services_serving_certs",
+                                "name": "serving-cert-volume"
+                            }
+                        ]
+                    }
+                ],
+                "volumes": [
+                    {
+                        "emptyDir": {},
+                        "name": "shared-volume"
+                    },
+                    {
+                        "name": "serving-cert-volume",
+                        "secret": {
+                            "defaultMode": 420,
+                            "secretName": "eap-clustering-test-tls"
+                        }
+                    },
+                    {
+                        "name": "rhit-ca-volume",
+                        "secret": {
+                            "defaultMode": 420,
+                            "secretName": "rhit-ca-crt"
+                        }
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 75
+            }
+        },
+        "test": false,
+        "triggers": [
+            {
+                "imageChangeParams": {
+                    "automatic": true,
+                    "containerNames": [
+                        "eap-clustering-test"
+                    ],
+                    "from": {
+                        "kind": "ImageStreamTag",
+                        "name": "eap-clustering-test:latest",
+                        "namespace": "ads--prototype"
+                    }
+                },
+                "type": "ImageChange"
+            },
+            {
+                "type": "ConfigChange"
+            }
+        ]
+    },
+    "status": {
+        "availableReplicas": 0,
+        "latestVersion": 0,
+        "observedGeneration": 0,
+        "replicas": 0,
+        "unavailableReplicas": 0,
+        "updatedReplicas": 0
+    }
+}

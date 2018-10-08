@@ -1,0 +1,31 @@
+{
+    "apiVersion": "route.openshift.io/v1",
+    "kind": "Route",
+    "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+            "template": "DEPLOY_TEMPLATE"
+        },
+        "name": "eap-clustering-test",
+        "selfLink": "/apis/route.openshift.io/v1/namespaces/ads--prototype/routes/eap-clustering-test"
+    },
+    "spec": {
+        "host": "eap-clustering-test.int.paas.dev.redhat.com",
+        "port": {
+            "targetPort": "8443-https"
+        },
+        "tls": {
+            "insecureEdgeTerminationPolicy": "Redirect",
+            "termination": "reencrypt"
+        },
+        "to": {
+            "kind": "Service",
+            "name": "eap-clustering-test",
+            "weight": 100
+        },
+        "wildcardPolicy": "None"
+    },
+    "status": {
+        "ingress": null
+    }
+}

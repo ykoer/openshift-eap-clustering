@@ -1,0 +1,40 @@
+{
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+        "annotations": {
+            "description": "The web server's http port.",
+            "service.alpha.openshift.io/serving-cert-secret-name": "eap-clustering-test-tls"        
+        },
+        "creationTimestamp": null,
+        "labels": {
+            "template": "DEPLOY_TEMPLATE"
+        },
+        "name": "eap-clustering-test",
+        "selfLink": "/api/v1/namespaces/ads--prototype/services/eap-clustering-test"
+    },
+    "spec": {
+        "ports": [
+            {
+                "name": "8080-http",
+                "port": 8080,
+                "protocol": "TCP",
+                "targetPort": 8080
+            },
+            {
+                "name": "8443-https",
+                "port":8443,
+                "protocol": "TCP",
+                "targetPort": 8443
+            }
+        ],
+        "selector": {
+            "deploymentConfig": "eap-clustering-test"
+        },
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+    },
+    "status": {
+        "loadBalancer": {}
+    }
+}

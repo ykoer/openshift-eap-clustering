@@ -1,0 +1,7 @@
+{
+    "realm": "redhat-external",
+    "auth-server-url": "https://sso.dev1.redhat.com/auth",
+    "ssl-required": "external",
+    "resource": "activate-app",
+    "public-client": true
+}
