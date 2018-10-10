@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -25,23 +26,36 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
     IClient client;
 
-    @Value("${openshift.console.url}")
-    String openshiftConsoleUrl;
-
-
     @Autowired
-    public void initClient(@Value("${openshift.console.url}") String openshiftConsoleUrl) {
-        client = new ClientBuilder(openshiftConsoleUrl).build();
+    private HttpSession httpSession;
+
+    @Value("${openshift.console.url}")
+    private String openshiftConsoleUrl;
+
+    private String token = null;
+
+
+    public OpenshiftServiceImpl() {
     }
 
-    @Override
-    public void setToken(String token) {
-        client.getAuthorizationContext().setToken(token);
+    public OpenshiftServiceImpl(String openshiftConsoleUrl, String token) {
+        this.token = token;
+        this.client = new ClientBuilder(openshiftConsoleUrl).usingToken(token).build();
+    }
+
+
+    private IClient getClient() {
+        if(token==null) {
+            token = (String) httpSession.getAttribute("OPENSHIFT_TOKEN");
+            client = new ClientBuilder(openshiftConsoleUrl).usingToken(token).build();
+        }
+        return client;
     }
 
     @Override
     public List<Pod> getPods(String project, String service, String status) {
-        List<IService> services = client.list(ResourceKind.SERVICE, project);
+
+        List<IService> services = getClient().list(ResourceKind.SERVICE, project);
         Optional<IService> iServiceOptional = services.stream().filter(s->s.getName().startsWith(service)).findFirst();
 
         if(iServiceOptional.isPresent()) {
@@ -63,7 +77,7 @@ public class OpenshiftServiceImpl implements OpenshiftService {
     }
 
     public List<IPod> getPodsRaw(String project, String service, String status) {
-        List<IService> services = client.list(ResourceKind.SERVICE, project);
+        List<IService> services = getClient().list(ResourceKind.SERVICE, project);
         Optional<IService> iServiceOptional = services.stream().filter(s->s.getName().startsWith(service)).findFirst();
 
         if(iServiceOptional.isPresent()) {
@@ -85,7 +99,7 @@ public class OpenshiftServiceImpl implements OpenshiftService {
     @Override
     public boolean deletePod(String project, String name) {
 
-        List<IPod> pods = client.list(ResourceKind.POD, project);
+        List<IPod> pods = getClient().list(ResourceKind.POD, project);
         Optional<IPod> podOptional = pods.stream().filter(p->p.getName().equals(name)).findFirst();
 
         if(podOptional.isPresent()) {

@@ -5,7 +5,7 @@
     <artifactId>session-replication-test</artifactId>
     <packaging>war</packaging>
     <version>1.0</version>
-    <name>session-replication</name>
+    <name>session-replication-test</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
         <jackson.version>2.8.1</jackson.version>
     </properties>
     <build>
-        <finalName>session-replication</finalName>
+        <finalName>session-replication-test</finalName>
 
         <plugins>
             <plugin>

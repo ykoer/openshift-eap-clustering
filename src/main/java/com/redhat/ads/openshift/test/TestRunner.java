@@ -27,9 +27,7 @@ public class TestRunner {
         this.openshiftToken = openshiftToken;
         this.openshiftProject = openshiftProject;
         this.openshiftService = openshiftService;
-        oc = new OpenshiftServiceImpl();
-        oc.initClient(openshiftUrl);
-        oc.setToken(openshiftToken);
+        oc = new OpenshiftServiceImpl(openshiftUrl, openshiftToken);
     }
 
     public void killPods() {
