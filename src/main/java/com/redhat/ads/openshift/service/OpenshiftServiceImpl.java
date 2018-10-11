@@ -45,7 +45,7 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
 
     private IClient getClient() {
-        if(token==null) {
+        if (httpSession != null) {
             token = (String) httpSession.getAttribute("OPENSHIFT_TOKEN");
             client = new ClientBuilder(openshiftConsoleUrl).usingToken(token).build();
         }
