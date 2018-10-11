@@ -1,12 +1,20 @@
 package com.redhat.ads.openshift.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 public class Pod {
+
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private String name;
     private String status;
     private String host;
     private String IP;
-    private String creationTimeStamp;
+    private String creationTimeStampString;
+    private Date creationTimeStamp;
 
 
     public String getName() {
@@ -41,11 +49,20 @@ public class Pod {
         this.IP = IP;
     }
 
-    public String getCreationTimeStamp() {
+    public String getCreationTimeStampString() {
+        return creationTimeStampString;
+    }
+
+    public void setCreationTimeStampString(String creationTimeStampString) {
+        this.creationTimeStampString = creationTimeStampString;
+        this.creationTimeStamp = parseDate(creationTimeStampString);
+    }
+
+    public Date getCreationTimeStamp() {
         return creationTimeStamp;
     }
 
-    public void setCreationTimeStamp(String creationTimeStamp) {
+    public void setCreationTimeStamp(Date creationTimeStamp) {
         this.creationTimeStamp = creationTimeStamp;
     }
 
@@ -69,9 +86,23 @@ public class Pod {
         return this;
     }
 
-    public Pod creationTimeStamp(final String creationTimeStamp) {
+    public Pod creationTimeStampString(final String creationTimeStampString) {
+        setCreationTimeStampString(creationTimeStampString);
+        return this;
+    }
+
+    public Pod creationTimeStamp(final Date creationTimeStamp) {
         this.creationTimeStamp = creationTimeStamp;
         return this;
+    }
+
+    private static Date parseDate(String dateString) {
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

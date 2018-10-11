@@ -18,7 +18,7 @@ public class OpenshiftController {
 
 
     @RequestMapping(
-            method = RequestMethod.PUT,
+            method = RequestMethod.GET,
             value = "/authenticate/{token}")
     public void setToken(@PathVariable String token, HttpSession httpSession) {
         httpSession.setAttribute("OPENSHIFT_TOKEN", token);

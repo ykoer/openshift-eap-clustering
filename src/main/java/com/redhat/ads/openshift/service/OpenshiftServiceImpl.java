@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,7 +26,8 @@ import java.util.stream.Collectors;
 @Service
 public class OpenshiftServiceImpl implements OpenshiftService {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssz");
+    //private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssz");
+
 
     IClient client;
 
@@ -70,6 +75,8 @@ public class OpenshiftServiceImpl implements OpenshiftService {
 
             return Optional.ofNullable(pods).orElse(Collections.emptyList()).stream()
                     .map(ipodToPod)
+                    .sorted(Comparator.comparing(pod -> pod.getCreationTimeStamp()))
+                    //.sorted(Comparator.comparing((Pod pod) -> pod.getCreationTimeStamp()).reversed())
                     .collect(Collectors.toList());
 
         }
@@ -117,11 +124,10 @@ public class OpenshiftServiceImpl implements OpenshiftService {
     private Function<IPod, Pod> ipodToPod = ipod -> new Pod()
             .name(ipod.getName())
             //.creationTimeStamp(Date.from(LocalDateTime.parse(ipod.getCreationTimeStamp(), formatter).toInstant(ZoneOffset.UTC)))
-            .creationTimeStamp(ipod.getCreationTimeStamp())
+            .creationTimeStampString(ipod.getCreationTimeStamp())
             .status(ipod.getStatus())
             .host(ipod.getHost())
             .IP(ipod.getIP());
-
 
 
 
